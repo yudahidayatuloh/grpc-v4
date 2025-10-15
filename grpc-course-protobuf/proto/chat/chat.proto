@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "grpc-course-protobuf/pb/chat";
+
+service ChatService {
+    rpc SendMassage(stream ChatMassage) returns (ChatResponse);
+    rpc ReceiveMessage (ReceiveMessageResponse) returns (ChatMassage);
+    rpc Chat (stream ChatMassage) returns (stream ChatMassage);
+}
+
+message ChatMassage {
+    int64 user_id = 1;
+    string content = 2;
+}
+
+message ChatResponse {
+    string message = 1;
+}
+
+message ReceiveMessageResponse {
+    int64 user_id = 1;
+}

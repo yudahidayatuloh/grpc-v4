@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "grpc-course-protobuf/pb/user";
+
+service UserService {
+    rpc CreateUser (User) returns (CreateResponse);
+}
+
+message Address {
+    int64 id = 1;
+    string full_address = 2;
+    string province = 3;
+    string city = 4;
+}
+
+message User {
+    int64 id = 1;
+    int64 age = 2;
+    double balance = 3;
+    bool is_active = 4;
+    Address address =5;
+    repeated string educations = 6;
+    string spounse_name = 7;
+}
+
+message CreateResponse {
+    string message = 1;
+}
