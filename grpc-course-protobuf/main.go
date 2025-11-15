@@ -15,11 +15,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type userServer struct {
+type userService struct {
 	user.UnimplementedUserServiceServer
 }
 
-func (us *userServer) CreateUser(ctx context.Context, userRequest *user.User) (*user.CreateResponse, error) {
+func (us *userService) CreateUser(ctx context.Context, userRequest *user.User) (*user.CreateResponse, error) {
 	log.Println("User is created")
 	return &user.CreateResponse{
 		Message: "User created",
@@ -38,10 +38,10 @@ func (cs *chatService) SendMassage(stream grpc.ClientStreamingServer[chat.ChatMa
 			if errors.Is(err, io.EOF) {
 				break
 			}
-			
+
 			return status.Errorf(codes.Unknown, "Error receiving message %v", err)
 		}
-	
+
 		log.Printf("Receive message: %s, to %d", req.Content, req.UserId)
 	}
 
@@ -49,22 +49,17 @@ func (cs *chatService) SendMassage(stream grpc.ClientStreamingServer[chat.ChatMa
 		Message: "Thanks for the messages:",
 	})
 }
-// func (UnimplementedChatServiceServer) ReceiveMessage(context.Context, *ReceiveMessageResponse) (*ChatMassage, error) {
-// 	return nil, status.Errorf(codes.Unimplemented, "method ReceiveMessage not implemented")
-// }
-// func (UnimplementedChatServiceServer) Chat(grpc.BidiStreamingServer[ChatMassage, ChatMassage]) error {
-// 	return status.Errorf(codes.Unimplemented, "method Chat not implemented")
-// }
 
 func main() {
 	lis, err := net.Listen("tcp", ":8081")
 	if err != nil {
-		log.Fatal("There is error in your net listen")		
+		log.Fatal("There is error in your net listen")
 	}
 
 	serv := grpc.NewServer()
 
-	user.RegisterUserServiceServer(serv, &userServer{})
+	// Sudah benar: userService
+	user.RegisterUserServiceServer(serv, &userService{})
 	chat.RegisterChatServiceServer(serv, &chatService{})
 
 	reflection.Register(serv)
